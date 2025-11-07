@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="/manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="P2P Tracker">
+    <title>P2P Lending Portfolio Tracker</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUDJQIExlbmRpbmcgVHJhY2tlciIsInNob3J0X25hbWUiOiJQMlAgVHJhY2tlciIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjNjY3ZWVhIiwidGhlbWVfY29sb3IiOiIjNjY3ZWVhIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NyZWN0IGZpbGw9JyUyMzY2N2VlYScgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnLyUzRSUzQ3RleHQgeD0nNTAnIHk9JzY1JyBmb250LXNpemU9JzUwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZSclM0Xwn5KwJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    <style>
+        :root {
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-light: #999;
+            --bg-white: #ffffff;
+            --bg-light: #f5f5f5;
+            --bg-lighter: #f9f9f9;
+            --border-color: #e0e0e0;
+            --card-shadow: rgba(0,0,0,0.1);
+            --card-shadow-hover: rgba(0,0,0,0.2);
+            --modal-bg: rgba(0,0,0,0.5);
+            --success-color: #4caf50;
+            --error-color: #ff4444;
+            --info-bg: #e8f0fe;
+            --warning-bg: #fff3e0;
+        }
+
+        body.dark-mode {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-light: #808080;
+            --bg-white: #2a2a3e;
+            --bg-light: #1f1f2e;
+            --bg-lighter: #252535;
+            --border-color: #3a3a4e;
+            --card-shadow: rgba(0,0,0,0.3);
+            --card-shadow-hover: rgba(0,0,0,0.5);
+            --modal-bg: rgba(0,0,0,0.7);
+            --success-color: #4caf50;
+            --error-color: #ff4444;
+            --info-bg: #1e3a5f;
+            --warning-bg: #3d2f1f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .portfolio-summary {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-summary h2 {
+            color: var(--text-primary);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .summary-card h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .summary-card .value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .add-platform-section {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .add-platform-section h2 {
+            color: var(--text-primary);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .data-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            padding: 10px 20px;
+            font-size: 0.9em;
+        }
+
+        .import-btn {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            padding: 10px 20px;
+            font-size: 0.9em;
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+            padding: 10px 20px;
+            font-size: 0.9em;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-white);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="text"].full-width,
+        textarea {
+            width: 100%;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .platform-box {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px var(--card-shadow);
+            position: relative;
+        }
+
+        .platform-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--card-shadow-hover);
+        }
+
+        .platform-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .platform-stats {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .platform-stats div {
+            margin: 5px 0;
+        }
+
+        .delete-platform {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1em;
+            padding: 0;
+        }
+
+        .delete-platform:hover {
+            background: #cc0000;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--modal-bg);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: var(--bg-white);
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 900px;
+            box-shadow: 0 10px 50px var(--card-shadow-hover);
+            transition: all 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            color: var(--text-primary);
+        }
+
+        .close {
+            font-size: 2em;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .close:hover {
+            color: var(--text-primary);
+        }
+
+        .loan-form {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .loan-form h3 {
+            color: var(--text-primary);
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .form-group-full {
+            grid-column: 1 / -1;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group label {
+            color: var(--text-primary) !important;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .repeat-options {
+            display: none;
+            background: var(--info-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .repeat-options.active {
+            display: block;
+        }
+
+        .fixed-principal-options {
+            display: none;
+            background: var(--warning-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .fixed-principal-options.active {
+            display: block;
+        }
+
+        .info-text {
+            color: #667eea;
+            font-size: 0.85em;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .calculated-info {
+            background: var(--bg-white);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: var(--text-primary);
+        }
+
+        .loans-list {
+            margin-top: 20px;
+        }
+
+        .loans-list h3 {
+            color: var(--text-primary);
+        }
+
+        .loan-item {
+            background: var(--bg-lighter);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .loan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+
+        .loan-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .loan-details {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .loan-details-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .detail-item {
+            background: var(--bg-white);
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: var(--text-primary);
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .loan-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .edit-loan {
+            background: #2196F3;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .delete-loan {
+            background: #ff4444;
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        .cancel-edit {
+            background: #999;
+            padding: 8px 20px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .platform-overview {
+            background: var(--info-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .platform-overview h3 {
+            color: var(--text-primary);
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .overview-item {
+            background: var(--bg-white);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .overview-item h4 {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .overview-item .value {
+            font-size: 1.4em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .no-platforms {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .badge-bullet {
+            background: #ff9800;
+            color: white;
+        }
+
+        .badge-repeat {
+            background: #4caf50;
+            color: white;
+        }
+
+        .badge-fixed-principal {
+            background: #9c27b0;
+            color: white;
+        }
+
+        .edit-mode-badge {
+            background: #2196F3;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-white);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px var(--card-shadow-hover);
+            z-index: 2000;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            color: var(--text-primary);
+        }
+
+        .notification.success {
+            border-left: 4px solid #4caf50;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ff4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Install Prompt Popup */
+        .install-prompt {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-white);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px var(--card-shadow-hover);
+            z-index: 3000;
+            max-width: 90%;
+            width: 400px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .install-prompt.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .install-prompt-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .install-prompt-icon {
+            font-size: 2.5em;
+        }
+
+        .install-prompt-text h3 {
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .install-prompt-text p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .install-prompt-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .install-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .dismiss-btn {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .theme-toggle {
+                position: static;
+                margin: 10px auto 20px;
+                width: fit-content;
+            }
+
+            .portfolio-summary, .add-platform-section {
+                padding: 15px;
+            }
+
+            .summary-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+            }
+
+            .summary-card {
+                padding: 15px;
+            }
+
+            .summary-card h3 {
+                font-size: 0.8em;
+            }
+
+            .summary-card .value {
+                font-size: 1.4em;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .data-buttons {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .export-btn, .import-btn, .reset-btn {
+                padding: 8px 15px;
+                font-size: 0.85em;
+                flex: 1;
+                min-width: 80px;
+            }
+
+            .platforms-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .platform-box {
+                padding: 20px;
+            }
+
+            .modal-content {
+                margin: 20px auto;
+                padding: 20px;
+                max-width: 95%;
+            }
+
+            .loan-form {
+                padding: 15px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .loan-details-row {
+                grid-template-columns: 1fr;
+            }
+
+            .loan-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .loan-actions button {
+                width: 100%;
+            }
+
+            .overview-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .overview-item {
+                padding: 10px;
+            }
+
+            .overview-item .value {
+                font-size: 1.2em;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .input-group input {
+                width: 100%;
+            }
+
+            .input-group button {
+                width: 100%;
+            }
+
+            .notification {
+                left: 10px;
+                right: 10px;
+                max-width: calc(100% - 20px);
+            }
+
+            .install-prompt {
+                bottom: 10px;
+                width: calc(100% - 20px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-card .value {
+                font-size: 1.3em;
+            }
+
+            .data-buttons {
+                flex-direction: column;
+            }
+
+            .export-btn, .import-btn, .reset-btn {
+                width: 100%;
+            }
+
+            .platform-box h3 {
+                font-size: 1.1em;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
+                <span id="themeIcon">🌙</span>
+                <span id="themeText">Night Mode</span>
+            </button>
+            <h1>💰 P2P Lending Portfolio Tracker</h1>
+            <p>Track your peer-to-peer lending investments</p>
+        </header>
+
+        <div class="portfolio-summary">
+            <h2>Portfolio Overview</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <h3>Total Invested</h3>
+                    <div class="value" id="totalInvested">€0.00</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Monthly Interest</h3>
+                    <div class="value" id="monthlyInterest">€0.00</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Avg. Annual Interest Rate</h3>
+                    <div class="value" id="avgAnnualRate">0%</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Total Expected Return</h3>
+                    <div class="value" id="totalReturn">€0.00</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Average ROI</h3>
+                    <div class="value" id="averageROI">0%</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Active Loans</h3>
+                    <div class="value" id="activeLoans">0</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Platforms</h3>
+                    <div class="value" id="platformCount">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-platform-section">
+            <div class="section-header">
+                <h2>Manage Platforms</h2>
+                <div class="data-buttons">
+                    <button class="export-btn" onclick="exportData()">📥 Export</button>
+                    <button class="import-btn" onclick="document.getElementById('importFile').click()">📤 Import</button>
+                    <button class="reset-btn" onclick="resetAllData()">🗑️ Reset All</button>
+                    <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+                </div>
+            </div>
+            <div class="input-group">
+                <input type="text" id="platformName" placeholder="Enter platform name (e.g., Mintos, Bondora)" style="flex: 1;">
+                <button onclick="addPlatform()">Add Platform</button>
+            </div>
+        </div>
+
+        <div class="platforms-grid" id="platformsGrid"></div>
+        <div class="no-platforms" id="noPlatforms">Add your first P2P lending platform to get started!</div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Install Prompt -->
+    <div id="installPrompt" class="install-prompt">
+        <div class="install-prompt-header">
+            <div class="install-prompt-icon">📱</div>
+            <div class="install-prompt-text">
+                <h3>Install P2P Tracker</h3>
+                <p>Add this app to your home screen for quick access!</p>
+            </div>
+        </div>
+        <div class="install-prompt-buttons">
+            <button class="dismiss-btn" onclick="dismissInstallPrompt()">Not Now</button>
+            <button class="install-btn" onclick="installApp()">Install</button>
+        </div>
+    </div>
+
+    <!-- Modal for managing loans -->
+    <div id="loanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Platform Name</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+
+            <div class="loan-form">
+                <div class="form-header">
+                    <h3 id="formTitle">Add New Loan</h3>
+                    <span id="editModeBadge" class="edit-mode-badge" style="display: none;">Editing Mode</span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form-group-full">
+                        <label>Description</label>
+                        <input type="text" id="loanDescription" placeholder="e.g., Personal loan #123, Business loan XYZ" class="full-width">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Amount Invested (€)</label>
+                        <input type="number" id="loanAmount" placeholder="1000" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>First Payment Date</label>
+                        <input type="date" id="firstPaymentDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Payment Date</label>
+                        <input type="date" id="lastPaymentDate" onchange="calculatePayments()">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form-group-full">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isBulletLoan" onchange="toggleBulletLoan()">
+                            <label for="isBulletLoan" style="margin: 0;">Bullet Loan (Principal repaid at maturity)</label>
+                        </div>
+                        <div class="info-text">Interest payments are made regularly, principal is returned on the last payment date</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form-group-full">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isFixedPrincipal" onchange="toggleFixedPrincipal()">
+                            <label for="isFixedPrincipal" style="margin: 0;">Fixed Principal Payments (Principal paid gradually)</label>
+                        </div>
+                        <div class="info-text">Fixed principal paid each period, remaining principal + total interest in last payment</div>
+                    </div>
+                </div>
+
+                <div id="fixedPrincipalOptions" class="fixed-principal-options">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Principal per Payment (€)</label>
+                            <input type="number" id="principalPerPayment" placeholder="50" step="0.01" onchange="calculateFixedPrincipal()">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Interest (€)</label>
+                            <input type="number" id="totalInterest" placeholder="240" step="0.01" onchange="calculateFixedPrincipal()">
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Frequency</label>
+                            <select id="fixedPrincipalFrequency" onchange="calculateFixedPrincipal()">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly" selected>Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="fixedPrincipalInfo" class="calculated-info" style="display: none;">
+                        <strong>Calculated:</strong> <span id="fixedPrincipalDisplay"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group form-group-full">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isRepeat" onchange="toggleRepeat()">
+                            <label for="isRepeat" style="margin: 0;">Repeating Payment (Fixed total payment)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="repeatOptions" class="repeat-options">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label id="installmentLabel">Payment Amount (€)</label>
+                            <input type="number" id="paymentAmount" placeholder="50" step="0.01" onchange="calculatePayments()">
+                        </div>
+                        <div class="form-group">
+                            <label>Payment Frequency</label>
+                            <select id="paymentFrequency" onchange="calculatePayments()">
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly" selected>Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="calculatedInfo" class="calculated-info" style="display: none;">
+                        <strong>Calculated:</strong> <span id="paymentCountDisplay"></span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <button onclick="saveLoan()" id="saveLoanBtn">Add Loan</button>
+                    <button onclick="cancelEdit()" id="cancelEditBtn" class="cancel-edit" style="display: none;">Cancel</button>
+                </div>
+            </div>
+
+            <div class="platform-overview">
+                <h3>Platform Overview</h3>
+                <div class="overview-grid">
+                    <div class="overview-item">
+                        <h4>Total Invested</h4>
+                        <div class="value" id="modalTotalInvested">€0.00</div>
+                    </div>
+                    <div class="overview-item">
+                        <h4>Monthly Income</h4>
+                        <div class="value" id="modalMonthlyIncome">€0.00</div>
+                    </div>
+                    <div class="overview-item">
+                        <h4>Total Return</h4>
+                        <div class="value" id="modalTotalReturn">€0.00</div>
+                    </div>
+                    <div class="overview-item">
+                        <h4>ROI</h4>
+                        <div class="value" id="modalROI">0%</div>
+                    </div>
+                    <div class="overview-item">
+                        <h4>Active Loans</h4>
+                        <div class="value" id="modalLoanCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loans-list">
+                <h3>Active Loans</h3>
+                <div id="loansContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let platforms = JSON.parse(localStorage.getItem('p2pPlatforms')) || {};
+        let currentPlatform = null;
+        let editingLoanId = null;
+        let deferredPrompt = null;
+
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = 'Light Mode';
+                localStorage.setItem('theme', 'dark');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1a1a2e');
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = 'Night Mode';
+                localStorage.setItem('theme', 'light');
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#667eea');
+            }
+        }
+
+        // Load saved theme
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeIcon').textContent = '☀️';
+                document.getElementById('themeText').textContent = 'Light Mode';
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', '#1a1a2e');
+            }
+        }
+
+        // Load theme on page load
+        loadTheme();
+
+        // PWA Install Prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        // Show install prompt after 3 seconds on mobile
+        setTimeout(() => {
+            const isInstallPromptDismissed = localStorage.getItem('installPromptDismissed');
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+
+            if (isMobile && !isStandalone && !isInstallPromptDismissed) {
+                document.getElementById('installPrompt').classList.add('show');
+            }
+        }, 3000);
+
+        function installApp() {
+            const installPrompt = document.getElementById('installPrompt');
+
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showNotification('App installed successfully!', 'success');
+                    }
+                    deferredPrompt = null;
+                    installPrompt.classList.remove('show');
+                    localStorage.setItem('installPromptDismissed', 'true');
+                });
+            } else {
+                showNotification('To install: Tap Share button and select "Add to Home Screen"', 'success');
+                installPrompt.classList.remove('show');
+                localStorage.setItem('installPromptDismissed', 'true');
+            }
+        }
+
+        function dismissInstallPrompt() {
+            document.getElementById('installPrompt').classList.remove('show');
+            localStorage.setItem('installPromptDismissed', 'true');
+        }
+
+        function resetAllData() {
+            if (confirm('⚠️ WARNING: This will permanently delete all your platforms and loans.\n\nAre you absolutely sure you want to reset all data?')) {
+                if (confirm('This action cannot be undone! Click OK to confirm deletion of ALL data.')) {
+                    platforms = {};
+                    localStorage.removeItem('p2pPlatforms');
+                    savePlatforms();
+                    showNotification('All data has been reset', 'success');
+                }
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function exportData() {
+            try {
+                const dataStr = JSON.stringify(platforms, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                const date = new Date().toISOString().split('T')[0];
+                link.download = `p2p-lending-data-${date}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                showNotification('Data exported successfully!', 'success');
+            } catch (error) {
+                showNotification('Error exporting data: ' + error.message, 'error');
+            }
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+
+                    if (typeof importedData !== 'object' || importedData === null) {
+                        throw new Error('Invalid data format');
+                    }
+
+                    const hasExistingData = Object.keys(platforms).length > 0;
+
+                    if (hasExistingData) {
+                        const confirmMessage = 'You have existing data. Do you want to:\n\n' +
+                                             'OK = Replace all data with imported data\n' +
+                                             'Cancel = Merge imported data with existing data';
+
+                        if (confirm(confirmMessage)) {
+                            platforms = importedData;
+                        } else {
+                            Object.keys(importedData).forEach(platformName => {
+                                if (platforms[platformName]) {
+                                    const existingLoans = platforms[platformName].loans || [];
+                                    const importedLoans = importedData[platformName].loans || [];
+                                    platforms[platformName].loans = [...existingLoans, ...importedLoans];
+                                } else {
+                                    platforms[platformName] = importedData[platformName];
+                                }
+                            });
+                        }
+                    } else {
+                        platforms = importedData;
+                    }
+
+                    savePlatforms();
+                    showNotification('Data imported successfully!', 'success');
+
+                } catch (error) {
+                    showNotification('Error importing data: ' + error.message, 'error');
+                }
+            };
+
+            reader.onerror = function() {
+                showNotification('Error reading file', 'error');
+            };
+
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function calculatePaymentCount(firstDate, lastDate, frequency) {
+            if (!firstDate || !lastDate) return 0;
+
+            const first = new Date(firstDate);
+            const last = new Date(lastDate);
+
+            const diffTime = Math.abs(last - first);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let count = 0;
+            switch(frequency) {
+                case 'daily':
+                    count = diffDays + 1;
+                    break;
+                case 'weekly':
+                    count = Math.floor(diffDays / 7) + 1;
+                    break;
+                case 'monthly':
+                    count = (last.getFullYear() - first.getFullYear()) * 12 + 
+                            (last.getMonth() - first.getMonth()) + 1;
+                    break;
+                case 'quarterly':
+                    count = Math.floor(((last.getFullYear() - first.getFullYear()) * 12 + 
+                            (last.getMonth() - first.getMonth())) / 3) + 1;
+                    break;
+                case 'yearly':
+                    count = (last.getFullYear() - first.getFullYear()) + 1;
+                    break;
+            }
+
+            return Math.max(1, count);
+        }
+
+        function calculateFixedPrincipal() {
+            const firstDate = document.getElementById('firstPaymentDate').value;
+            const lastDate = document.getElementById('lastPaymentDate').value;
+            const frequency = document.getElementById('fixedPrincipalFrequency').value;
+            const principalPer = parseFloat(document.getElementById('principalPerPayment').value);
+            const totalInterest = parseFloat(document.getElementById('totalInterest').value);
+            const amount = parseFloat(document.getElementById('loanAmount').value);
+
+            if (firstDate && lastDate && frequency && principalPer && totalInterest) {
+                const count = calculatePaymentCount(firstDate, lastDate, frequency);
+                const display = document.getElementById('fixedPrincipalInfo');
+                const infoDisplay = document.getElementById('fixedPrincipalDisplay');
+
+                if (count > 0) {
+                    const regularPayments = count - 1;
+                    const regularPrincipalTotal = principalPer * regularPayments;
+                    const remainingPrincipal = amount ? (amount - regularPrincipalTotal) : 0;
+                    const totalReturn = amount + totalInterest;
+
+                    infoDisplay.innerHTML = `${regularPayments} payments of €${principalPer.toFixed(2)} (principal only)<br>` +
+                                          `Last payment: €${(remainingPrincipal + totalInterest).toFixed(2)} (€${remainingPrincipal.toFixed(2)} remaining principal + €${totalInterest.toFixed(2)} total interest)<br>` +
+                                          `<strong>Total return: €${totalReturn.toFixed(2)}</strong>`;
+                    display.style.display = 'block';
+                } else {
+                    display.style.display = 'none';
+                }
+            }
+        }
+
+        function calculatePayments() {
+            const firstDate = document.getElementById('firstPaymentDate').value;
+            const lastDate = document.getElementById('lastPaymentDate').value;
+            const frequency = document.getElementById('paymentFrequency').value;
+            const paymentAmount = parseFloat(document.getElementById('paymentAmount').value);
+
+            if (firstDate && lastDate && frequency) {
+                const count = calculatePaymentCount(firstDate, lastDate, frequency);
+                const display = document.getElementById('calculatedInfo');
+                const countDisplay = document.getElementById('paymentCountDisplay');
+
+                if (paymentAmount && count > 0) {
+                    const total = paymentAmount * count;
+                    countDisplay.textContent = `${count} payments of €${paymentAmount.toFixed(2)} = €${total.toFixed(2)} total`;
+                    display.style.display = 'block';
+                } else if (count > 0) {
+                    countDisplay.textContent = `${count} payments`;
+                    display.style.display = 'block';
+                } else {
+                    display.style.display = 'none';
+                }
+            }
+        }
+
+        function toggleFixedPrincipal() {
+            const isChecked = document.getElementById('isFixedPrincipal').checked;
+            const fixedOptions = document.getElementById('fixedPrincipalOptions');
+            const bulletLoan = document.getElementById('isBulletLoan');
+            const repeatPayment = document.getElementById('isRepeat');
+
+            if (isChecked) {
+                bulletLoan.checked = false;
+                bulletLoan.disabled = true;
+                repeatPayment.checked = false;
+                repeatPayment.disabled = true;
+                document.getElementById('repeatOptions').classList.remove('active');
+            } else {
+                bulletLoan.disabled = false;
+                repeatPayment.disabled = false;
+            }
+
+            fixedOptions.classList.toggle('active', isChecked);
+            calculateFixedPrincipal();
+        }
+
+        function toggleRepeat() {
+            const isChecked = document.getElementById('isRepeat').checked;
+            const repeatOptions = document.getElementById('repeatOptions');
+            repeatOptions.classList.toggle('active', isChecked);
+            updateInstallmentLabel();
+            calculatePayments();
+        }
+
+        function toggleBulletLoan() {
+            const isBullet = document.getElementById('isBulletLoan').checked;
+            const isRepeat = document.getElementById('isRepeat');
+            const isFixedPrincipal = document.getElementById('isFixedPrincipal');
+
+            if (isBullet) {
+                isFixedPrincipal.checked = false;
+                isFixedPrincipal.disabled = true;
+                document.getElementById('fixedPrincipalOptions').classList.remove('active');
+
+                if (!isRepeat.checked) {
+                    isRepeat.checked = true;
+                    toggleRepeat();
+                }
+            } else {
+                isFixedPrincipal.disabled = false;
+            }
+            updateInstallmentLabel();
+        }
+
+        function updateInstallmentLabel() {
+            const isBullet = document.getElementById('isBulletLoan').checked;
+            const label = document.getElementById('installmentLabel');
+            if (isBullet) {
+                label.textContent = 'Interest Payment (€)';
+            } else {
+                label.textContent = 'Payment Amount (€)';
+            }
+        }
+
+        function savePlatforms() {
+            localStorage.setItem('p2pPlatforms', JSON.stringify(platforms));
+            renderPlatforms();
+            updatePortfolioSummary();
+        }
+
+        function addPlatform() {
+            const name = document.getElementById('platformName').value.trim();
+            if (!name) {
+                alert('Please enter a platform name');
+                return;
+            }
+            if (platforms[name]) {
+                alert('Platform already exists');
+                return;
+            }
+            platforms[name] = { loans: [] };
+            document.getElementById('platformName').value = '';
+            savePlatforms();
+        }
+
+        function deletePlatform(platformName, event) {
+            event.stopPropagation();
+            if (confirm(`Are you sure you want to delete ${platformName} and all its loans?`)) {
+                delete platforms[platformName];
+                savePlatforms();
+            }
+        }
+
+        function openPlatform(platformName) {
+            currentPlatform = platformName;
+            document.getElementById('modalTitle').textContent = platformName;
+            updateModalStats();
+            renderLoans();
+            document.getElementById('loanModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('loanModal').style.display = 'none';
+            currentPlatform = null;
+            clearLoanForm();
+        }
+
+        function clearLoanForm() {
+            editingLoanId = null;
+            document.getElementById('loanDescription').value = '';
+            document.getElementById('loanAmount').value = '';
+            document.getElementById('firstPaymentDate').value = '';
+            document.getElementById('lastPaymentDate').value = '';
+            document.getElementById('isBulletLoan').checked = false;
+            document.getElementById('isBulletLoan').disabled = false;
+            document.getElementById('isFixedPrincipal').checked = false;
+            document.getElementById('isFixedPrincipal').disabled = false;
+            document.getElementById('isRepeat').checked = false;
+            document.getElementById('isRepeat').disabled = false;
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('paymentFrequency').value = 'monthly';
+            document.getElementById('principalPerPayment').value = '';
+            document.getElementById('totalInterest').value = '';
+            document.getElementById('fixedPrincipalFrequency').value = 'monthly';
+            document.getElementById('repeatOptions').classList.remove('active');
+            document.getElementById('fixedPrincipalOptions').classList.remove('active');
+            document.getElementById('calculatedInfo').style.display = 'none';
+            document.getElementById('fixedPrincipalInfo').style.display = 'none';
+            document.getElementById('formTitle').textContent = 'Add New Loan';
+            document.getElementById('saveLoanBtn').textContent = 'Add Loan';
+            document.getElementById('editModeBadge').style.display = 'none';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            updateInstallmentLabel();
+        }
+
+        function editLoan(loanId) {
+            const loan = platforms[currentPlatform].loans.find(l => l.id === loanId);
+            if (!loan) return;
+
+            editingLoanId = loanId;
+
+            document.getElementById('loanDescription').value = loan.description;
+            document.getElementById('loanAmount').value = loan.amount;
+            document.getElementById('firstPaymentDate').value = loan.firstPaymentDate;
+            document.getElementById('lastPaymentDate').value = loan.lastPaymentDate;
+            document.getElementById('isBulletLoan').checked = loan.isBullet || false;
+            document.getElementById('isFixedPrincipal').checked = loan.isFixedPrincipal || false;
+            document.getElementById('isRepeat').checked = loan.isRepeat || false;
+
+            if (loan.isFixedPrincipal) {
+                document.getElementById('principalPerPayment').value = loan.principalPerPayment;
+                document.getElementById('totalInterest').value = loan.totalInterest;
+                document.getElementById('fixedPrincipalFrequency').value = loan.fixedPrincipalFrequency;
+                document.getElementById('fixedPrincipalOptions').classList.add('active');
+                document.getElementById('isBulletLoan').disabled = true;
+                document.getElementById('isRepeat').disabled = true;
+                calculateFixedPrincipal();
+            } else if (loan.isRepeat) {
+                document.getElementById('paymentAmount').value = loan.paymentAmount;
+                document.getElementById('paymentFrequency').value = loan.frequency;
+                document.getElementById('repeatOptions').classList.add('active');
+                calculatePayments();
+            }
+
+            if (loan.isBullet) {
+                document.getElementById('isFixedPrincipal').disabled = true;
+            }
+
+            updateInstallmentLabel();
+
+            document.getElementById('formTitle').textContent = 'Edit Loan';
+            document.getElementById('saveLoanBtn').textContent = 'Update Loan';
+            document.getElementById('editModeBadge').style.display = 'inline-block';
+            document.getElementById('cancelEditBtn').style.display = 'inline-block';
+
+            document.querySelector('.loan-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function cancelEdit() {
+            clearLoanForm();
+            renderLoans();
+        }
+
+        function saveLoan() {
+            const description = document.getElementById('loanDescription').value.trim();
+            const amount = parseFloat(document.getElementById('loanAmount').value);
+            const firstDate = document.getElementById('firstPaymentDate').value;
+            const lastDate = document.getElementById('lastPaymentDate').value;
+            const isBullet = document.getElementById('isBulletLoan').checked;
+            const isFixedPrincipal = document.getElementById('isFixedPrincipal').checked;
+            const isRepeat = document.getElementById('isRepeat').checked;
+
+            if (!description || !amount || !firstDate || !lastDate) {
+                alert('Please fill in description, amount, first payment date, and last payment date');
+                return;
+            }
+
+            const loan = {
+                id: editingLoanId || Date.now(),
+                description: description,
+                amount: amount,
+                firstPaymentDate: firstDate,
+                lastPaymentDate: lastDate,
+                isBullet: isBullet,
+                isFixedPrincipal: isFixedPrincipal,
+                isRepeat: isRepeat
+            };
+
+            if (isFixedPrincipal) {
+                const principalPer = parseFloat(document.getElementById('principalPerPayment').value);
+                const totalInterest = parseFloat(document.getElementById('totalInterest').value);
+                const frequency = document.getElementById('fixedPrincipalFrequency').value;
+
+                if (!principalPer || !totalInterest) {
+                    alert('Please fill in principal per payment and total interest');
+                    return;
+                }
+
+                const paymentCount = calculatePaymentCount(firstDate, lastDate, frequency);
+
+                loan.principalPerPayment = principalPer;
+                loan.totalInterest = totalInterest;
+                loan.fixedPrincipalFrequency = frequency;
+                loan.paymentCount = paymentCount;
+            } else if (isRepeat) {
+                const paymentAmount = parseFloat(document.getElementById('paymentAmount').value);
+                const frequency = document.getElementById('paymentFrequency').value;
+
+                if (!paymentAmount) {
+                    alert('Please fill in payment amount');
+                    return;
+                }
+
+                const paymentCount = calculatePaymentCount(firstDate, lastDate, frequency);
+
+                loan.paymentAmount = paymentAmount;
+                loan.paymentCount = paymentCount;
+                loan.frequency = frequency;
+            }
+
+            if (editingLoanId) {
+                const index = platforms[currentPlatform].loans.findIndex(l => l.id === editingLoanId);
+                if (index !== -1) {
+                    platforms[currentPlatform].loans[index] = loan;
+                }
+            } else {
+                platforms[currentPlatform].loans.push(loan);
+            }
+
+            clearLoanForm();
+            savePlatforms();
+            updateModalStats();
+            renderLoans();
+        }
+
+        function deleteLoan(loanId) {
+            if (confirm('Are you sure you want to delete this loan?')) {
+                platforms[currentPlatform].loans = platforms[currentPlatform].loans.filter(l => l.id !== loanId);
+                if (editingLoanId === loanId) {
+                    clearLoanForm();
+                }
+                savePlatforms();
+                updateModalStats();
+                renderLoans();
+            }
+        }
+
+        function getFrequencyMultiplier(frequency) {
+            const multipliers = {
+                'daily': 30,
+                'weekly': 4.33,
+                'monthly': 1,
+                'quarterly': 0.33,
+                'yearly': 0.083
+            };
+            return multipliers[frequency] || 1;
+        }
+
+        function getLoanDurationInMonths(firstDate, lastDate) {
+            const first = new Date(firstDate);
+            const last = new Date(lastDate);
+            return (last.getFullYear() - first.getFullYear()) * 12 + 
+                   (last.getMonth() - first.getMonth()) + 1;
+        }
+
+        function calculatePlatformStats(platformName) {
+            const loans = platforms[platformName].loans;
+            const totalInvested = loans.reduce((sum, loan) => sum + loan.amount, 0);
+
+            let monthlyIncome = 0;
+            let monthlyInterest = 0;
+            let totalReturn = 0;
+            let totalInterestEarned = 0;
+            let totalMonths = 0;
+
+            loans.forEach(loan => {
+                const durationInMonths = getLoanDurationInMonths(loan.firstPaymentDate, loan.lastPaymentDate);
+                totalMonths += durationInMonths;
+
+                if (loan.isFixedPrincipal) {
+                    const multiplier = getFrequencyMultiplier(loan.fixedPrincipalFrequency);
+                    monthlyIncome += loan.principalPerPayment * multiplier;
+                    monthlyInterest += 0;
+                    totalReturn += loan.amount + loan.totalInterest;
+                    totalInterestEarned += loan.totalInterest;
+                } else if (loan.isBullet && loan.isRepeat) {
+                    const multiplier = getFrequencyMultiplier(loan.frequency);
+                    const interestPerMonth = loan.paymentAmount * multiplier;
+                    monthlyIncome += interestPerMonth;
+                    monthlyInterest += interestPerMonth;
+                    const totalInterest = loan.paymentAmount * loan.paymentCount;
+                    totalReturn += totalInterest + loan.amount;
+                    totalInterestEarned += totalInterest;
+                } else if (loan.isRepeat) {
+                    const multiplier = getFrequencyMultiplier(loan.frequency);
+                    monthlyIncome += loan.paymentAmount * multiplier;
+                    const totalPaid = loan.paymentAmount * loan.paymentCount;
+                    const interestEarned = totalPaid - loan.amount;
+                    monthlyInterest += (interestEarned / loan.paymentCount) * multiplier;
+                    totalReturn += totalPaid;
+                    totalInterestEarned += interestEarned;
+                } else {
+                    totalReturn += loan.amount;
+                }
+            });
+
+            const profit = totalReturn - totalInvested;
+            const roi = totalInvested > 0 ? (profit / totalInvested) * 100 : 0;
+
+            const avgDurationInMonths = loans.length > 0 ? totalMonths / loans.length : 0;
+            const avgDurationInYears = avgDurationInMonths / 12;
+            const annualInterestRate = (totalInvested > 0 && avgDurationInYears > 0) 
+                ? (totalInterestEarned / totalInvested / avgDurationInYears) * 100 
+                : 0;
+
+            return {
+                totalInvested,
+                monthlyIncome,
+                monthlyInterest,
+                totalReturn,
+                profit,
+                roi,
+                loanCount: loans.length,
+                annualInterestRate
+            };
+        }
+
+        function updateModalStats() {
+            const stats = calculatePlatformStats(currentPlatform);
+            document.getElementById('modalTotalInvested').textContent = `€${stats.totalInvested.toFixed(2)}`;
+            document.getElementById('modalMonthlyIncome').textContent = `€${stats.monthlyIncome.toFixed(2)}`;
+            document.getElementById('modalTotalReturn').textContent = `€${stats.totalReturn.toFixed(2)}`;
+            document.getElementById('modalROI').textContent = `${stats.roi.toFixed(2)}%`;
+            document.getElementById('modalLoanCount').textContent = stats.loanCount;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function renderLoans() {
+            const container = document.getElementById('loansContainer');
+            const loans = platforms[currentPlatform].loans;
+
+            if (loans.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No loans added yet</p>';
+                return;
+            }
+
+            container.innerHTML = loans.map(loan => {
+                let paymentInfo = '';
+                let returnInfo = '';
+                let roi = 0;
+                let badge = '';
+
+                if (loan.isFixedPrincipal) {
+                    const totalReturn = loan.amount + loan.totalInterest;
+                    const profit = loan.totalInterest;
+                    roi = ((profit / loan.amount) * 100).toFixed(2);
+                    const regularPayments = loan.paymentCount - 1;
+                    const regularPrincipal = loan.principalPerPayment * regularPayments;
+                    const remainingPrincipal = loan.amount - regularPrincipal;
+                    paymentInfo = `${regularPayments} × €${loan.principalPerPayment.toFixed(2)} (principal) + Final: €${(remainingPrincipal + loan.totalInterest).toFixed(2)}`;
+                    returnInfo = `Total interest: €${loan.totalInterest.toFixed(2)} | Total return: €${totalReturn.toFixed(2)}`;
+                    badge = '<span class="badge badge-fixed-principal">FIXED PRINCIPAL</span>';
+                } else if (loan.isBullet && loan.isRepeat) {
+                    const totalInterest = loan.paymentAmount * loan.paymentCount;
+                    const totalReturn = totalInterest + loan.amount;
+                    const profit = totalReturn - loan.amount;
+                    roi = ((profit / loan.amount) * 100).toFixed(2);
+                    paymentInfo = `Interest: ${loan.paymentCount} × €${loan.paymentAmount.toFixed(2)} ${loan.frequency}`;
+                    returnInfo = `Total interest: €${totalInterest.toFixed(2)} + Principal: €${loan.amount.toFixed(2)} = €${totalReturn.toFixed(2)}`;
+                    badge = '<span class="badge badge-bullet">BULLET</span>';
+                } else if (loan.isRepeat) {
+                    const totalReturn = loan.paymentAmount * loan.paymentCount;
+                    const profit = totalReturn - loan.amount;
+                    roi = ((profit / loan.amount) * 100).toFixed(2);
+                    paymentInfo = `${loan.paymentCount} × €${loan.paymentAmount.toFixed(2)} ${loan.frequency}`;
+                    returnInfo = `Total return: €${totalReturn.toFixed(2)}`;
+                    badge = '<span class="badge badge-repeat">REPEAT</span>';
+                } else {
+                    paymentInfo = 'Single payment';
+                    returnInfo = `Amount: €${loan.amount.toFixed(2)}`;
+                }
+
+                const isEditing = editingLoanId === loan.id;
+                const editingStyle = isEditing ? 'style="border-left: 4px solid #2196F3; background: #e3f2fd;"' : '';
+
+                return `
+                    <div class="loan-item" ${editingStyle}>
+                        <div class="loan-header">
+                            <div>
+                                <div class="loan-title">${loan.description}${badge}${isEditing ? ' <span class="edit-mode-badge">Editing</span>' : ''}</div>
+                                <div class="loan-details">€${loan.amount.toFixed(2)} invested</div>
+                            </div>
+                            <div class="loan-actions">
+                                <button class="edit-loan" onclick="editLoan(${loan.id})">Edit</button>
+                                <button class="delete-loan" onclick="deleteLoan(${loan.id})">Delete</button>
+                            </div>
+                        </div>
+                        <div class="loan-details-row">
+                            <div class="detail-item">
+                                <span class="detail-label">Payment:</span> ${paymentInfo}
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Return:</span> ${returnInfo}
+                            </div>
+                            ${(loan.isRepeat || loan.isBullet || loan.isFixedPrincipal) ? `<div class="detail-item"><span class="detail-label">ROI:</span> ${roi}%</div>` : ''}
+                            <div class="detail-item">
+                                <span class="detail-label">First Payment:</span> ${formatDate(loan.firstPaymentDate)}
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Last Payment:</span> ${formatDate(loan.lastPaymentDate)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPlatforms() {
+            const grid = document.getElementById('platformsGrid');
+            const noPlatforms = document.getElementById('noPlatforms');
+            const platformNames = Object.keys(platforms);
+
+            if (platformNames.length === 0) {
+                grid.style.display = 'none';
+                noPlatforms.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noPlatforms.style.display = 'none';
+
+            grid.innerHTML = platformNames.map(name => {
+                const stats = calculatePlatformStats(name);
+                return `
+                    <div class="platform-box" onclick="openPlatform('${name}')">
+                        <button class="delete-platform" onclick="deletePlatform('${name}', event)">×</button>
+                        <h3>${name}</h3>
+                        <div class="platform-stats">
+                            <div><strong>Invested:</strong> €${stats.totalInvested.toFixed(2)}</div>
+                            <div><strong>Monthly:</strong> €${stats.monthlyIncome.toFixed(2)}</div>
+                            <div><strong>Total Return:</strong> €${stats.totalReturn.toFixed(2)}</div>
+                            <div><strong>ROI:</strong> ${stats.roi.toFixed(2)}%</div>
+                            <div><strong>Loans:</strong> ${stats.loanCount}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updatePortfolioSummary() {
+            const platformNames = Object.keys(platforms);
+            let totalInvested = 0;
+            let monthlyIncome = 0;
+            let monthlyInterest = 0;
+            let totalReturn = 0;
+            let totalLoans = 0;
+            let totalInterestEarned = 0;
+            let totalMonths = 0;
+            let totalLoanCount = 0;
+
+            platformNames.forEach(name => {
+                const stats = calculatePlatformStats(name);
+                totalInvested += stats.totalInvested;
+                monthlyIncome += stats.monthlyIncome;
+                monthlyInterest += stats.monthlyInterest;
+                totalReturn += stats.totalReturn;
+                totalLoans += stats.loanCount;
+
+                platforms[name].loans.forEach(loan => {
+                    totalLoanCount++;
+                    const durationInMonths = getLoanDurationInMonths(loan.firstPaymentDate, loan.lastPaymentDate);
+                    totalMonths += durationInMonths;
+
+                    if (loan.isFixedPrincipal) {
+                        totalInterestEarned += loan.totalInterest;
+                    } else if (loan.isBullet && loan.isRepeat) {
+                        totalInterestEarned += loan.paymentAmount * loan.paymentCount;
+                    } else if (loan.isRepeat) {
+                        totalInterestEarned += (loan.paymentAmount * loan.paymentCount) - loan.amount;
+                    }
+                });
+            });
+
+            const profit = totalReturn - totalInvested;
+            const averageROI = totalInvested > 0 ? (profit / totalInvested) * 100 : 0;
+
+            const avgDurationInMonths = totalLoanCount > 0 ? totalMonths / totalLoanCount : 0;
+            const avgDurationInYears = avgDurationInMonths / 12;
+            const avgAnnualRate = (totalInvested > 0 && avgDurationInYears > 0) 
+                ? (totalInterestEarned / totalInvested / avgDurationInYears) * 100 
+                : 0;
+
+            document.getElementById('totalInvested').textContent = `€${totalInvested.toFixed(2)}`;
+            document.getElementById('monthlyInterest').textContent = `€${monthlyInterest.toFixed(2)}`;
+            document.getElementById('avgAnnualRate').textContent = `${avgAnnualRate.toFixed(2)}%`;
+            document.getElementById('totalReturn').textContent = `€${totalReturn.toFixed(2)}`;
+            document.getElementById('averageROI').textContent = `${averageROI.toFixed(2)}%`;
+            document.getElementById('activeLoans').textContent = totalLoans;
+            document.getElementById('platformCount').textContent = platformNames.length;
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('loanModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        renderPlatforms();
+        updatePortfolioSummary();
+    </script>
+</body>
+</html>
