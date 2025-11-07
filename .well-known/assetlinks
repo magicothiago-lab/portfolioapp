@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "pro.tomiemon.tracker.twa",
+      "sha256_cert_fingerprints": [
+        "BA:FF:D8:B8:50:A6:65:E3:EF:4C:E5:57:14:62:F7:24:C2:32:E5:8F:CE:F0:CA:CB:71:05:5D:78:91:4E:34:D1"
+      ]
+    }
+  }
+]
