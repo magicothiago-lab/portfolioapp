@@ -1,11 +1,9 @@
 {
   "name": "Portfolio P2P",
   "short_name": "Portfolio",
-  "start_url": "track.tomiemon.pro",
+  "start_url": "/",
   "display": "standalone",
-  "display_override": [
-    "fullscreen"
-  ],
+  "display_override": ["fullscreen"],
   "background_color": "#FFFFFF",
   "theme_color": "#007BFF",
   "orientation": "portrait",
