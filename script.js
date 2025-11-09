@@ -33,7 +33,7 @@ function changeCurrency(currency) {
 function formatCurrency(amount) {
     const symbol = CURRENCIES[currentCurrency];
     const formattedAmount = typeof amount === 'number' ? amount.toFixed(2) : parseFloat(amount || 0).toFixed(2);
-    
+
     if (currentCurrency === 'EUR' || currentCurrency === 'USD' || currentCurrency === 'GBP') {
         return symbol + formattedAmount;
     }
@@ -45,15 +45,27 @@ function initializeCharts() {
     const platformNames = Object.keys(platforms);
     if (platformNames.length === 0) return;
 
+    // Get current text color for charts
+    const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim();
+    const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color').trim();
+
     const chartConfig = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: {
                 labels: {
-                    color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
-                    font: { size: 12 }
+                    color: textColor,
+                    font: { size: 12 },
+                    padding: 15
                 }
+            },
+            tooltip: {
+                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-white').trim(),
+                titleColor: textColor,
+                bodyColor: textColor,
+                borderColor: gridColor,
+                borderWidth: 1
             }
         }
     };
@@ -98,10 +110,10 @@ function initializeCharts() {
                 labels: ['Personal', 'Business', 'Real Estate', 'Auto', 'Other'],
                 datasets: [{
                     data: [
-                        categoryBreakdown.personal, 
-                        categoryBreakdown.business, 
-                        categoryBreakdown.real_estate, 
-                        categoryBreakdown.auto, 
+                        categoryBreakdown.personal,
+                        categoryBreakdown.business,
+                        categoryBreakdown.real_estate,
+                        categoryBreakdown.auto,
                         categoryBreakdown.other
                     ],
                     backgroundColor: ['#2196F3', '#FF9800', '#4CAF50', '#9C27B0', '#607D8B']
@@ -138,15 +150,21 @@ function initializeCharts() {
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary'),
-                            callback: function(value) {
+                            color: textColor,
+                            callback: function (value) {
                                 return formatCurrency(value);
                             }
+                        },
+                        grid: {
+                            color: gridColor
                         }
                     },
                     x: {
                         ticks: {
-                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+                            color: textColor
+                        },
+                        grid: {
+                            color: gridColor
                         }
                     }
                 }
@@ -324,7 +342,7 @@ function importData(event) {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         try {
             const importedData = JSON.parse(e.target.result);
 
@@ -336,8 +354,8 @@ function importData(event) {
 
             if (hasExistingData) {
                 const confirmMessage = 'You have existing data. Do you want to:\n\n' +
-                                     'OK = Replace all data with imported data\n' +
-                                     'Cancel = Merge imported data with existing data';
+                    'OK = Replace all data with imported data\n' +
+                    'Cancel = Merge imported data with existing data';
 
                 if (confirm(confirmMessage)) {
                     platforms = importedData;
@@ -364,7 +382,7 @@ function importData(event) {
         }
     };
 
-    reader.onerror = function() {
+    reader.onerror = function () {
         showNotification('Error reading file', 'error');
     };
 
@@ -382,7 +400,7 @@ function calculatePaymentCount(firstDate, lastDate, frequency) {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     let count = 0;
-    switch(frequency) {
+    switch (frequency) {
         case 'daily':
             count = diffDays + 1;
             break;
@@ -390,12 +408,12 @@ function calculatePaymentCount(firstDate, lastDate, frequency) {
             count = Math.floor(diffDays / 7) + 1;
             break;
         case 'monthly':
-            count = (last.getFullYear() - first.getFullYear()) * 12 + 
-                    (last.getMonth() - first.getMonth()) + 1;
+            count = (last.getFullYear() - first.getFullYear()) * 12 +
+                (last.getMonth() - first.getMonth()) + 1;
             break;
         case 'quarterly':
-            count = Math.floor(((last.getFullYear() - first.getFullYear()) * 12 + 
-                    (last.getMonth() - first.getMonth())) / 3) + 1;
+            count = Math.floor(((last.getFullYear() - first.getFullYear()) * 12 +
+                (last.getMonth() - first.getMonth())) / 3) + 1;
             break;
         case 'yearly':
             count = (last.getFullYear() - first.getFullYear()) + 1;
@@ -425,8 +443,8 @@ function calculateFixedPrincipal() {
             const totalReturn = amount + totalInterest;
 
             infoDisplay.innerHTML = `${regularPayments} payments of ${formatCurrency(principalPer)} (principal only)<br>` +
-                                  `Last payment: ${formatCurrency(remainingPrincipal + totalInterest)} (${formatCurrency(remainingPrincipal)} remaining principal + ${formatCurrency(totalInterest)} total interest)<br>` +
-                                  `<strong>Total return: ${formatCurrency(totalReturn)}</strong>`;
+                `Last payment: ${formatCurrency(remainingPrincipal + totalInterest)} (${formatCurrency(remainingPrincipal)} remaining principal + ${formatCurrency(totalInterest)} total interest)<br>` +
+                `<strong>Total return: ${formatCurrency(totalReturn)}</strong>`;
             display.style.display = 'block';
         } else {
             display.style.display = 'none';
@@ -740,8 +758,8 @@ function getFrequencyMultiplier(frequency) {
 function getLoanDurationInMonths(firstDate, lastDate) {
     const first = new Date(firstDate);
     const last = new Date(lastDate);
-    return (last.getFullYear() - first.getFullYear()) * 12 + 
-           (last.getMonth() - first.getMonth()) + 1;
+    return (last.getFullYear() - first.getFullYear()) * 12 +
+        (last.getMonth() - first.getMonth()) + 1;
 }
 
 function calculatePlatformStats(platformName) {
@@ -786,12 +804,12 @@ function calculatePlatformStats(platformName) {
     });
 
     const profit = totalReturn - totalInvested;
-    
+
     // Calculate Net Annualised Return
     const avgDurationInMonths = loans.length > 0 ? totalMonths / loans.length : 0;
     const avgDurationInYears = avgDurationInMonths / 12;
-    const netAnnualisedReturn = (totalInvested > 0 && avgDurationInYears > 0) 
-        ? (totalInterestEarned / totalInvested / avgDurationInYears) * 100 
+    const netAnnualisedReturn = (totalInvested > 0 && avgDurationInYears > 0)
+        ? (totalInterestEarned / totalInvested / avgDurationInYears) * 100
         : 0;
 
     return {
@@ -1006,7 +1024,7 @@ function updatePortfolioSummary() {
                     const yearEnd = new Date(currentYear, 11, 31);
                     const effectiveStart = firstPayment > yearStart ? firstPayment : yearStart;
                     const effectiveEnd = lastPayment < yearEnd ? lastPayment : yearEnd;
-                    
+
                     if (effectiveStart <= effectiveEnd) {
                         const monthsInYear = getLoanDurationInMonths(
                             effectiveStart.toISOString().split('T')[0],
@@ -1014,7 +1032,7 @@ function updatePortfolioSummary() {
                         );
                         const multiplier = getFrequencyMultiplier(loan.fixedPrincipalFrequency);
                         const monthlyPrincipal = loan.principalPerPayment * multiplier;
-                        
+
                         if (lastPayment.getFullYear() === currentYear) {
                             yieldThisYear += loan.totalInterest;
                         }
@@ -1028,7 +1046,7 @@ function updatePortfolioSummary() {
                     const yearEnd = new Date(currentYear, 11, 31);
                     const effectiveStart = firstPayment > yearStart ? firstPayment : yearStart;
                     const effectiveEnd = lastPayment < yearEnd ? lastPayment : yearEnd;
-                    
+
                     if (effectiveStart <= effectiveEnd) {
                         const monthsInYear = getLoanDurationInMonths(
                             effectiveStart.toISOString().split('T')[0],
@@ -1042,13 +1060,13 @@ function updatePortfolioSummary() {
             } else if (loan.isRepeat) {
                 const totalPaid = loan.paymentAmount * loan.paymentCount;
                 const interestEarned = totalPaid - loan.amount;
-                
+
                 if (firstPayment.getFullYear() <= currentYear && lastPayment.getFullYear() >= currentYear) {
                     const yearStart = new Date(currentYear, 0, 1);
                     const yearEnd = new Date(currentYear, 11, 31);
                     const effectiveStart = firstPayment > yearStart ? firstPayment : yearStart;
                     const effectiveEnd = lastPayment < yearEnd ? lastPayment : yearEnd;
-                    
+
                     if (effectiveStart <= effectiveEnd) {
                         const monthsInYear = getLoanDurationInMonths(
                             effectiveStart.toISOString().split('T')[0],
@@ -1103,7 +1121,7 @@ function updatePortfolioSummary() {
 }
 
 // Initialize the app
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     loadTheme();
     document.getElementById('currencySelector').value = currentCurrency;
     setInterval(checkPaymentDues, 60000); // Check every minute
@@ -1114,7 +1132,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Modal close on outside click
-window.onclick = function(event) {
+window.onclick = function (event) {
     const modal = document.getElementById('loanModal');
     if (event.target === modal) {
         closeModal();
