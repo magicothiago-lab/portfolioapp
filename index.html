@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="manifest" href="/manifest.json">
     <meta charset="UTF-8">
@@ -12,8 +13,10 @@
     <title>P2P Lending Portfolio Tracker</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUDJQIExlbmRpbmcgVHJhY2tlciIsInNob3J0X25hbWUiOiJQMlAgVHJhY2tlciIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjNjY3ZWVhIiwidGhlbWVfY29sb3IiOiIjNjY3ZWVhIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NyZWN0IGZpbGw9JyUyMzY2N2VlYScgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnLyUzRSUzQ3RleHQgeD0nNTAnIHk9JzY1JyBmb250LXNpemU9JzUwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZSclM0Xwn5KwJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    <link rel="manifest"
+        href="data:application/json;base64,eyJuYW1lIjoiUDJQIExlbmRpbmcgVHJhY2tlciIsInNob3J0X25hbWUiOiJQMlAgVHJhY2tlciIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjNjY3ZWVhIiwidGhlbWVfY29sb3IiOiIjNjY3ZWVhIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NyZWN0IGZpbGw9JyUyMzY2N2VlYScgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnLyUzRSUzQ3RleHQgeD0nNTAnIHk9JzY1JyBmb250LXNpemU9JzUwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZSclM0Xwn5KwJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -67,7 +70,8 @@
             <h2>📊 Portfolio Analytics</h2>
             <div class="charts-grid">
                 <div class="chart-container">
-                    <h3 style="text-align:center; color: var(--text-primary); margin-bottom: 15px;">Investment by Platform</h3>
+                    <h3 style="text-align:center; color: var(--text-primary); margin-bottom: 15px;">Investment by
+                        Platform</h3>
                     <canvas id="platformChart"></canvas>
                 </div>
                 <div class="chart-container">
@@ -75,7 +79,8 @@
                     <canvas id="categoryChart"></canvas>
                 </div>
                 <div class="chart-container">
-                    <h3 style="text-align:center; color: var(--text-primary); margin-bottom: 15px;">Returns Breakdown</h3>
+                    <h3 style="text-align:center; color: var(--text-primary); margin-bottom: 15px;">Returns Breakdown
+                    </h3>
                     <canvas id="returnsChart"></canvas>
                 </div>
             </div>
@@ -86,13 +91,15 @@
                 <h2>Manage Platforms</h2>
                 <div class="data-buttons">
                     <button class="export-btn" onclick="exportData()">📥 Export</button>
-                    <button class="import-btn" onclick="document.getElementById('importFile').click()">📤 Import</button>
+                    <button class="import-btn" onclick="document.getElementById('importFile').click()">📤
+                        Import</button>
                     <button class="reset-btn" onclick="resetAllData()">🗑️ Reset All</button>
                     <input type="file" id="importFile" accept=".json" onchange="importData(event)">
                 </div>
             </div>
             <div class="input-group">
-                <input type="text" id="platformName" placeholder="Enter platform name (e.g., Mintos, Bondora)" style="flex: 1;">
+                <input type="text" id="platformName" placeholder="Enter platform name (e.g., Mintos, Bondora)"
+                    style="flex: 1;">
                 <button onclick="addPlatform()">Add Platform</button>
             </div>
         </div>
@@ -136,7 +143,8 @@
                 <div class="form-row">
                     <div class="form-group form-group-full">
                         <label>Description</label>
-                        <input type="text" id="loanDescription" placeholder="e.g., Personal loan #123, Business loan XYZ" class="full-width">
+                        <input type="text" id="loanDescription"
+                            placeholder="e.g., Personal loan #123, Business loan XYZ" class="full-width">
                     </div>
                 </div>
 
@@ -169,9 +177,11 @@
                     <div class="form-group form-group-full">
                         <div class="checkbox-group">
                             <input type="checkbox" id="isBulletLoan" onchange="toggleBulletLoan()">
-                            <label for="isBulletLoan" style="margin: 0;">Bullet Loan (Principal repaid at maturity)</label>
+                            <label for="isBulletLoan" style="margin: 0;">Bullet Loan (Principal repaid at
+                                maturity)</label>
                         </div>
-                        <div class="info-text">Interest payments are made regularly, principal is returned on the last payment date</div>
+                        <div class="info-text">Interest payments are made regularly, principal is returned on the last
+                            payment date</div>
                     </div>
                 </div>
 
@@ -179,9 +189,11 @@
                     <div class="form-group form-group-full">
                         <div class="checkbox-group">
                             <input type="checkbox" id="isFixedPrincipal" onchange="toggleFixedPrincipal()">
-                            <label for="isFixedPrincipal" style="margin: 0;">Fixed Principal Payments (Principal paid gradually)</label>
+                            <label for="isFixedPrincipal" style="margin: 0;">Fixed Principal Payments (Principal paid
+                                gradually)</label>
                         </div>
-                        <div class="info-text">Fixed principal paid each period, remaining principal + total interest in last payment</div>
+                        <div class="info-text">Fixed principal paid each period, remaining principal + total interest in
+                            last payment</div>
                     </div>
                 </div>
 
@@ -189,11 +201,13 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label>Principal per Payment</label>
-                            <input type="number" id="principalPerPayment" placeholder="50" step="0.01" onchange="calculateFixedPrincipal()">
+                            <input type="number" id="principalPerPayment" placeholder="50" step="0.01"
+                                onchange="calculateFixedPrincipal()">
                         </div>
                         <div class="form-group">
                             <label>Total Interest</label>
-                            <input type="number" id="totalInterest" placeholder="240" step="0.01" onchange="calculateFixedPrincipal()">
+                            <input type="number" id="totalInterest" placeholder="240" step="0.01"
+                                onchange="calculateFixedPrincipal()">
                         </div>
                         <div class="form-group">
                             <label>Payment Frequency</label>
@@ -224,7 +238,8 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label id="installmentLabel">Payment Amount</label>
-                            <input type="number" id="paymentAmount" placeholder="50" step="0.01" onchange="calculatePayments()">
+                            <input type="number" id="paymentAmount" placeholder="50" step="0.01"
+                                onchange="calculatePayments()">
                         </div>
                         <div class="form-group">
                             <label>Payment Frequency</label>
@@ -244,7 +259,8 @@
 
                 <div style="margin-top: 15px;">
                     <button onclick="saveLoan()" id="saveLoanBtn">Add Loan</button>
-                    <button onclick="cancelEdit()" id="cancelEditBtn" class="cancel-edit" style="display: none;">Cancel</button>
+                    <button onclick="cancelEdit()" id="cancelEditBtn" class="cancel-edit"
+                        style="display: none;">Cancel</button>
                 </div>
             </div>
 
@@ -285,5 +301,17 @@
     <div id="paymentAlerts" style="position: fixed; top: 80px; right: 20px; z-index: 2000; max-width: 350px;"></div>
 
     <script src="script.js"></script>
+
+    <script src="script.js"></script>
+    <style>
+        /* Chart canvas styling for better visibility */
+        canvas {
+            background: transparent !important;
+        }
+    </style>
 </body>
+
+</html>
+</body>
+
 </html>
