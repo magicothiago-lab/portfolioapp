@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,13 +109,40 @@
             background: var(--bg-white);
             border-radius: 15px;
             padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .capital-display {
+            text-align: left;
+        }
+
+        .capital-display h2 {
+            color: var(--text-secondary);
+            font-size: 1em;
+            font-weight: normal;
+            margin-bottom: 10px;
+        }
+
+        .capital-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .account-overview {
+            background: var(--bg-white);
+            border-radius: 15px;
+            padding: 25px;
             margin-bottom: 30px;
             box-shadow: 0 10px 30px var(--card-shadow);
             transition: all 0.3s ease;
         }
 
-        .portfolio-summary h2 {
+        .account-overview h2 {
             color: var(--text-primary);
+            margin-bottom: 20px;
         }
 
         .summary-grid {
@@ -723,8 +751,12 @@
                 width: fit-content;
             }
 
-            .portfolio-summary, .add-platform-section {
+            .portfolio-summary, .account-overview, .add-platform-section {
                 padding: 15px;
+            }
+
+            .capital-value {
+                font-size: 2.2em;
             }
 
             .summary-grid {
@@ -877,40 +909,33 @@
         </header>
 
         <div class="portfolio-summary">
-            <h2>Portfolio Overview</h2>
+            <div class="capital-display">
+                <h2>Total Capital</h2>
+                <div class="capital-value" id="totalInvested">€0.00</div>
+            </div>
+        </div>
+            <div class="account-overview">
+            <h2>Account Overview</h2>
             <div class="summary-grid">
                 <div class="summary-card">
-                    <h3>Total Invested</h3>
-                    <div class="value" id="totalInvested">€0.00</div>
+                    <h3>Earned this Month</h3>
+                    <div class="value" id="earnedThisMonth">€0.00</div>
                 </div>
                 <div class="summary-card">
-                    <h3>Monthly Interest</h3>
-                    <div class="value" id="monthlyInterest">€0.00</div>
+                    <h3>Your Yield in 2025</h3>
+                    <div class="value" id="yieldThisYear">€0.00</div>
                 </div>
                 <div class="summary-card">
-                    <h3>Avg. Annual Interest Rate</h3>
-                    <div class="value" id="avgAnnualRate">0%</div>
+                    <h3>Pending Incomes</h3>
+                    <div class="value" id="pendingIncomes">€0.00</div>
                 </div>
                 <div class="summary-card">
-                    <h3>Total Expected Return</h3>
-                    <div class="value" id="totalReturn">€0.00</div>
-                </div>
-                <div class="summary-card">
-                    <h3>Average ROI</h3>
-                    <div class="value" id="averageROI">0%</div>
-                </div>
-                <div class="summary-card">
-                    <h3>Active Loans</h3>
-                    <div class="value" id="activeLoans">0</div>
-                </div>
-                <div class="summary-card">
-                    <h3>Platforms</h3>
-                    <div class="value" id="platformCount">0</div>
+                    <h3>Average Yield</h3>
+                    <div class="value" id="averageYield">0%</div>
                 </div>
             </div>
         </div>
-
-        <div class="add-platform-section">
+<div class="add-platform-section">
             <div class="section-header">
                 <h2>Manage Platforms</h2>
                 <div class="data-buttons">
@@ -1079,11 +1104,11 @@
                         <div class="value" id="modalMonthlyIncome">€0.00</div>
                     </div>
                     <div class="overview-item">
-                        <h4>Total Return</h4>
+                        <h4>Total Interest</h4>
                         <div class="value" id="modalTotalReturn">€0.00</div>
                     </div>
                     <div class="overview-item">
-                        <h4>ROI</h4>
+                        <h4>Net Annualised Return</h4>
                         <div class="value" id="modalROI">0%</div>
                     </div>
                     <div class="overview-item">
@@ -1686,11 +1711,11 @@
             });
 
             const profit = totalReturn - totalInvested;
-            const roi = totalInvested > 0 ? (profit / totalInvested) * 100 : 0;
-
+            
+            // Calculate Net Annualised Return
             const avgDurationInMonths = loans.length > 0 ? totalMonths / loans.length : 0;
             const avgDurationInYears = avgDurationInMonths / 12;
-            const annualInterestRate = (totalInvested > 0 && avgDurationInYears > 0) 
+            const netAnnualisedReturn = (totalInvested > 0 && avgDurationInYears > 0) 
                 ? (totalInterestEarned / totalInvested / avgDurationInYears) * 100 
                 : 0;
 
@@ -1700,9 +1725,10 @@
                 monthlyInterest,
                 totalReturn,
                 profit,
-                roi,
+                netAnnualisedReturn,
                 loanCount: loans.length,
-                annualInterestRate
+                annualInterestRate: netAnnualisedReturn,
+                totalInterestEarned
             };
         }
 
@@ -1710,8 +1736,8 @@
             const stats = calculatePlatformStats(currentPlatform);
             document.getElementById('modalTotalInvested').textContent = `€${stats.totalInvested.toFixed(2)}`;
             document.getElementById('modalMonthlyIncome').textContent = `€${stats.monthlyIncome.toFixed(2)}`;
-            document.getElementById('modalTotalReturn').textContent = `€${stats.totalReturn.toFixed(2)}`;
-            document.getElementById('modalROI').textContent = `${stats.roi.toFixed(2)}%`;
+            document.getElementById('modalTotalReturn').textContent = `€${stats.totalInterestEarned.toFixed(2)}`;
+            document.getElementById('modalROI').textContent = `${stats.netAnnualisedReturn.toFixed(2)}%`;
             document.getElementById('modalLoanCount').textContent = stats.loanCount;
         }
 
@@ -1738,7 +1764,9 @@
                 if (loan.isFixedPrincipal) {
                     const totalReturn = loan.amount + loan.totalInterest;
                     const profit = loan.totalInterest;
-                    roi = ((profit / loan.amount) * 100).toFixed(2);
+                    const durationInMonths = getLoanDurationInMonths(loan.firstPaymentDate, loan.lastPaymentDate);
+                    const durationInYears = durationInMonths / 12;
+                    roi = durationInYears > 0 ? ((profit / loan.amount / durationInYears) * 100).toFixed(2) : '0.00';
                     const regularPayments = loan.paymentCount - 1;
                     const regularPrincipal = loan.principalPerPayment * regularPayments;
                     const remainingPrincipal = loan.amount - regularPrincipal;
@@ -1749,14 +1777,18 @@
                     const totalInterest = loan.paymentAmount * loan.paymentCount;
                     const totalReturn = totalInterest + loan.amount;
                     const profit = totalReturn - loan.amount;
-                    roi = ((profit / loan.amount) * 100).toFixed(2);
+                    const durationInMonths = getLoanDurationInMonths(loan.firstPaymentDate, loan.lastPaymentDate);
+                    const durationInYears = durationInMonths / 12;
+                    roi = durationInYears > 0 ? ((profit / loan.amount / durationInYears) * 100).toFixed(2) : '0.00';
                     paymentInfo = `Interest: ${loan.paymentCount} × €${loan.paymentAmount.toFixed(2)} ${loan.frequency}`;
                     returnInfo = `Total interest: €${totalInterest.toFixed(2)} + Principal: €${loan.amount.toFixed(2)} = €${totalReturn.toFixed(2)}`;
                     badge = '<span class="badge badge-bullet">BULLET</span>';
                 } else if (loan.isRepeat) {
                     const totalReturn = loan.paymentAmount * loan.paymentCount;
                     const profit = totalReturn - loan.amount;
-                    roi = ((profit / loan.amount) * 100).toFixed(2);
+                    const durationInMonths = getLoanDurationInMonths(loan.firstPaymentDate, loan.lastPaymentDate);
+                    const durationInYears = durationInMonths / 12;
+                    roi = durationInYears > 0 ? ((profit / loan.amount / durationInYears) * 100).toFixed(2) : '0.00';
                     paymentInfo = `${loan.paymentCount} × €${loan.paymentAmount.toFixed(2)} ${loan.frequency}`;
                     returnInfo = `Total return: €${totalReturn.toFixed(2)}`;
                     badge = '<span class="badge badge-repeat">REPEAT</span>';
@@ -1787,7 +1819,7 @@
                             <div class="detail-item">
                                 <span class="detail-label">Return:</span> ${returnInfo}
                             </div>
-                            ${(loan.isRepeat || loan.isBullet || loan.isFixedPrincipal) ? `<div class="detail-item"><span class="detail-label">ROI:</span> ${roi}%</div>` : ''}
+                            ${(loan.isRepeat || loan.isBullet || loan.isFixedPrincipal) ? `<div class="detail-item"><span class="detail-label">Net Annualised Return:</span> ${roi}%</div>` : ''}
                             <div class="detail-item">
                                 <span class="detail-label">First Payment:</span> ${formatDate(loan.firstPaymentDate)}
                             </div>
@@ -1823,8 +1855,8 @@
                         <div class="platform-stats">
                             <div><strong>Invested:</strong> €${stats.totalInvested.toFixed(2)}</div>
                             <div><strong>Monthly:</strong> €${stats.monthlyIncome.toFixed(2)}</div>
-                            <div><strong>Total Return:</strong> €${stats.totalReturn.toFixed(2)}</div>
-                            <div><strong>ROI:</strong> ${stats.roi.toFixed(2)}%</div>
+                            <div><strong>Total Interest:</strong> €${stats.totalInterestEarned.toFixed(2)}</div>
+                            <div><strong>Net Annualised Return:</strong> ${stats.netAnnualisedReturn.toFixed(2)}%</div>
                             <div><strong>Loans:</strong> ${stats.loanCount}</div>
                         </div>
                     </div>
@@ -1843,6 +1875,13 @@
             let totalMonths = 0;
             let totalLoanCount = 0;
 
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+            let earnedThisMonth = 0;
+            let yieldThisYear = 0;
+            let pendingIncomes = 0;
+
             platformNames.forEach(name => {
                 const stats = calculatePlatformStats(name);
                 totalInvested += stats.totalInvested;
@@ -1856,33 +1895,145 @@
                     const durationInMonths = getLoanDurationInMonths(loan.firstPaymentDate, loan.lastPaymentDate);
                     totalMonths += durationInMonths;
 
+                    const firstPayment = new Date(loan.firstPaymentDate);
+                    const lastPayment = new Date(loan.lastPaymentDate);
+
+                    // Calculate earned this month
+                    if (firstPayment <= currentDate) {
+                        if (loan.isFixedPrincipal) {
+                            const multiplier = getFrequencyMultiplier(loan.fixedPrincipalFrequency);
+                            const monthlyPrincipal = loan.principalPerPayment * multiplier;
+                            if (lastPayment.getMonth() === currentMonth && lastPayment.getFullYear() === currentYear) {
+                                earnedThisMonth += monthlyPrincipal + loan.totalInterest;
+                            } else if (lastPayment >= currentDate) {
+                                earnedThisMonth += monthlyPrincipal;
+                            }
+                        } else if (loan.isBullet && loan.isRepeat) {
+                            const multiplier = getFrequencyMultiplier(loan.frequency);
+                            const monthlyPayment = loan.paymentAmount * multiplier;
+                            if (lastPayment >= currentDate) {
+                                earnedThisMonth += monthlyPayment;
+                            }
+                        } else if (loan.isRepeat) {
+                            const multiplier = getFrequencyMultiplier(loan.frequency);
+                            const monthlyPayment = loan.paymentAmount * multiplier;
+                            if (lastPayment >= currentDate) {
+                                earnedThisMonth += monthlyPayment;
+                            }
+                        }
+                    }
+
+                    // Calculate yield this year (total interest earned in current year)
                     if (loan.isFixedPrincipal) {
+                        if (firstPayment.getFullYear() <= currentYear && lastPayment.getFullYear() >= currentYear) {
+                            const yearStart = new Date(currentYear, 0, 1);
+                            const yearEnd = new Date(currentYear, 11, 31);
+                            const effectiveStart = firstPayment > yearStart ? firstPayment : yearStart;
+                            const effectiveEnd = lastPayment < yearEnd ? lastPayment : yearEnd;
+                            
+                            if (effectiveStart <= effectiveEnd) {
+                                const monthsInYear = getLoanDurationInMonths(
+                                    effectiveStart.toISOString().split('T')[0],
+                                    effectiveEnd.toISOString().split('T')[0]
+                                );
+                                const multiplier = getFrequencyMultiplier(loan.fixedPrincipalFrequency);
+                                const monthlyPrincipal = loan.principalPerPayment * multiplier;
+                                
+                                if (lastPayment.getFullYear() === currentYear) {
+                                    yieldThisYear += loan.totalInterest;
+                                }
+                            }
+                        }
                         totalInterestEarned += loan.totalInterest;
                     } else if (loan.isBullet && loan.isRepeat) {
-                        totalInterestEarned += loan.paymentAmount * loan.paymentCount;
+                        const totalInterest = loan.paymentAmount * loan.paymentCount;
+                        if (firstPayment.getFullYear() <= currentYear && lastPayment.getFullYear() >= currentYear) {
+                            const yearStart = new Date(currentYear, 0, 1);
+                            const yearEnd = new Date(currentYear, 11, 31);
+                            const effectiveStart = firstPayment > yearStart ? firstPayment : yearStart;
+                            const effectiveEnd = lastPayment < yearEnd ? lastPayment : yearEnd;
+                            
+                            if (effectiveStart <= effectiveEnd) {
+                                const monthsInYear = getLoanDurationInMonths(
+                                    effectiveStart.toISOString().split('T')[0],
+                                    effectiveEnd.toISOString().split('T')[0]
+                                );
+                                const multiplier = getFrequencyMultiplier(loan.frequency);
+                                yieldThisYear += loan.paymentAmount * multiplier * monthsInYear;
+                            }
+                        }
+                        totalInterestEarned += totalInterest;
                     } else if (loan.isRepeat) {
-                        totalInterestEarned += (loan.paymentAmount * loan.paymentCount) - loan.amount;
+                        const totalPaid = loan.paymentAmount * loan.paymentCount;
+                        const interestEarned = totalPaid - loan.amount;
+                        
+                        if (firstPayment.getFullYear() <= currentYear && lastPayment.getFullYear() >= currentYear) {
+                            const yearStart = new Date(currentYear, 0, 1);
+                            const yearEnd = new Date(currentYear, 11, 31);
+                            const effectiveStart = firstPayment > yearStart ? firstPayment : yearStart;
+                            const effectiveEnd = lastPayment < yearEnd ? lastPayment : yearEnd;
+                            
+                            if (effectiveStart <= effectiveEnd) {
+                                const monthsInYear = getLoanDurationInMonths(
+                                    effectiveStart.toISOString().split('T')[0],
+                                    effectiveEnd.toISOString().split('T')[0]
+                                );
+                                const totalMonthsInLoan = getLoanDurationInMonths(loan.firstPaymentDate, loan.lastPaymentDate);
+                                const interestPerMonth = interestEarned / totalMonthsInLoan;
+                                yieldThisYear += interestPerMonth * monthsInYear;
+                            }
+                        }
+                        totalInterestEarned += interestEarned;
                     }
+                    // Calculate pending interest incomes (future payments)
+                    if (lastPayment > currentDate) {
+                        if (loan.isFixedPrincipal) {
+                            // For fixed principal loans, we already have total interest defined
+                            const paymentsMade = calculatePaymentCount(
+                                loan.firstPaymentDate,
+                                currentDate.toISOString().split('T')[0],
+                                loan.fixedPrincipalFrequency
+                            );
+                            const totalPayments = loan.paymentCount;
+                            const interestPerPayment = loan.totalInterest / totalPayments;
+                            const pendingPayments = totalPayments - paymentsMade;
+                            pendingIncomes += interestPerPayment * pendingPayments;
+                        } else if (loan.isBullet && loan.isRepeat) {
+                            // For bullet loans, all payments are interest except last one (principal)
+                            const paymentsLeft = calculatePaymentCount(
+                                currentDate.toISOString().split('T')[0],
+                                loan.lastPaymentDate,
+                                loan.frequency
+                            );
+                            // Only count interest payments (exclude principal)
+                            pendingIncomes += loan.paymentAmount * (paymentsLeft - 1);
+                        } else if (loan.isRepeat) {
+                            // For regular repeating payments, calculate pending interest
+                            const totalPaid = loan.paymentAmount * loan.paymentCount;
+                            const totalInterest = totalPaid - loan.amount;
+                            const interestPerPayment = totalInterest / loan.paymentCount;
+                            const paymentsMade = calculatePaymentCount(
+                                loan.firstPaymentDate,
+                                currentDate.toISOString().split('T')[0],
+                                loan.frequency
+                            );
+                            const pendingPayments = loan.paymentCount - paymentsMade;
+                            pendingIncomes += interestPerPayment * pendingPayments;
+                        }
+                        // No else - we don't count pending incomes for single payment loans
+}
                 });
             });
-
-            const profit = totalReturn - totalInvested;
-            const averageROI = totalInvested > 0 ? (profit / totalInvested) * 100 : 0;
-
-            const avgDurationInMonths = totalLoanCount > 0 ? totalMonths / totalLoanCount : 0;
-            const avgDurationInYears = avgDurationInMonths / 12;
-            const avgAnnualRate = (totalInvested > 0 && avgDurationInYears > 0) 
-                ? (totalInterestEarned / totalInvested / avgDurationInYears) * 100 
-                : 0;
-
             document.getElementById('totalInvested').textContent = `€${totalInvested.toFixed(2)}`;
-            document.getElementById('monthlyInterest').textContent = `€${monthlyInterest.toFixed(2)}`;
-            document.getElementById('avgAnnualRate').textContent = `${avgAnnualRate.toFixed(2)}%`;
-            document.getElementById('totalReturn').textContent = `€${totalReturn.toFixed(2)}`;
-            document.getElementById('averageROI').textContent = `${averageROI.toFixed(2)}%`;
-            document.getElementById('activeLoans').textContent = totalLoans;
-            document.getElementById('platformCount').textContent = platformNames.length;
-        }
+            document.getElementById('earnedThisMonth').textContent = `€${earnedThisMonth.toFixed(2)}`;
+            document.getElementById('yieldThisYear').textContent = `€${yieldThisYear.toFixed(2)}`;
+            document.getElementById('pendingIncomes').textContent = `€${Math.max(0, pendingIncomes).toFixed(2)}`;
+// Calculate and display average yield
+            const averageYield = (totalInvested > 0) 
+                ? (totalInterestEarned / totalInvested * 100).toFixed(2)
+                : 0;
+            document.getElementById('averageYield').textContent = `${averageYield}%`;
+}
 
         window.onclick = function(event) {
             const modal = document.getElementById('loanModal');
