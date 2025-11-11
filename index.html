@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#667eea">
@@ -13,6 +13,8 @@
     <title>P2P Lending Portfolio Tracker</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="apple-touch-icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23667eea' width='100' height='100'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>💰</text></svg>">
     <link rel="manifest"
         href="data:application/json;base64,eyJuYW1lIjoiUDJQIExlbmRpbmcgVHJhY2tlciIsInNob3J0X25hbWUiOiJQMlAgVHJhY2tlciIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjNjY3ZWVhIiwidGhlbWVfY29sb3IiOiIjNjY3ZWVhIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgMTAwIDEwMCclM0UlM0NyZWN0IGZpbGw9JyUyMzY2N2VlYScgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnLyUzRSUzQ3RleHQgeD0nNTAnIHk9JzY1JyBmb250LXNpemU9JzUwJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJyBmaWxsPSd3aGl0ZSclM0Xwn5KwJTNDL3RleHQlM0UlM0Mvc3ZnJTNFIiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
 </head>
@@ -21,14 +23,11 @@
     <div class="container">
         <header>
             <select class="currency-selector" id="currencySelector" onchange="changeCurrency(this.value)">
-                <option value="EUR">EUR €</option>
-                <option value="USD">USD $</option>
-                <option value="GBP">GBP £</option>
-                <option value="CHF">CHF</option>
-                <option value="SEK">SEK</option>
-                <option value="NOK">NOK</option>
-                <option value="DKK">DKK</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
             </select>
+
             <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle">
                 <span id="themeIcon">🌙</span>
                 <span id="themeText">Night Mode</span>
@@ -103,7 +102,10 @@
                 <button onclick="addPlatform()">Add Platform</button>
             </div>
         </div>
-
+        <!-- Add just before platformsGrid -->
+        <div class="input-group" style="margin-bottom:10px;">
+            <input type="text" id="platformSearch" placeholder="Search platforms..." style="flex:1;">
+        </div>
         <div class="platforms-grid" id="platformsGrid"></div>
         <div class="no-platforms" id="noPlatforms">Add your first P2P lending platform to get started!</div>
     </div>
@@ -266,6 +268,9 @@
 
             <div class="platform-overview">
                 <h3>Platform Overview</h3>
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <input type="text" id="platformSearch" placeholder="Search platforms..." style="flex: 1;">
+                </div>
                 <div class="overview-grid">
                     <div class="overview-item">
                         <h4>Total Invested</h4>
@@ -292,15 +297,23 @@
 
             <div class="loans-list">
                 <h3>Active Loans</h3>
+                <div class="input-group" style="margin-bottom:10px;">
+                    <input type="text" id="loanSearch" placeholder="Search loans..." style="flex:1;">
+                </div>
                 <div id="loansContainer"></div>
+
             </div>
         </div>
     </div>
 
     <!-- Payment due alerts container -->
-    <div id="paymentAlerts" style="position: fixed; top: 80px; right: 20px; z-index: 2000; max-width: 350px;"></div>
+    <button id="dismissAllPayments"
+        style="display: none; position: fixed; top: 50px; right: 20px; z-index: 2100; background: #444; color: #fff; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer;">
+        Dismiss All Notifications
+    </button>
+    <div id="paymentAlerts" style="position: fixed; top: 80px; right: 20px; z-index: 2000; max-width: 350px"></div>
 
-    <script src="script.js"></script>
+
 
     <script src="script.js"></script>
     <style>
