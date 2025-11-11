@@ -4,16 +4,14 @@ let currentPlatform = null;
 let editingLoanId = null;
 let deferredPrompt = null;
 let platformChart, categoryChart, returnsChart;
+let platformSearchTerm = '';
+let loanSearchTerm = '';
 
 // Currency configuration
 const CURRENCIES = {
-    'EUR': '€',
-    'USD': '$',
-    'GBP': '£',
-    'CHF': 'CHF',
-    'SEK': 'kr',
-    'NOK': 'kr',
-    'DKK': 'kr'
+    EUR: "€",
+    GBP: "£",
+    JPY: "¥",
 };
 let currentCurrency = localStorage.getItem('selectedCurrency') || 'EUR';
 
@@ -32,13 +30,30 @@ function changeCurrency(currency) {
 
 function formatCurrency(amount) {
     const symbol = CURRENCIES[currentCurrency];
-    const formattedAmount = typeof amount === 'number' ? amount.toFixed(2) : parseFloat(amount || 0).toFixed(2);
+    let formattedAmount;
 
-    if (currentCurrency === 'EUR' || currentCurrency === 'USD' || currentCurrency === 'GBP') {
-        return symbol + formattedAmount;
+    if (currentCurrency === "EUR" || currentCurrency === "GBP") {
+        formattedAmount = Number(amount).toLocaleString("en-GB", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        return symbol + formattedAmount; // €1,234.56 or £1,234.56
+    } else if (currentCurrency === "JPY") {
+        formattedAmount = Number(amount).toLocaleString("ja-JP", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+        return symbol + formattedAmount; // ¥1,234
     }
-    return formattedAmount + ' ' + symbol;
+
+    // fallback
+    formattedAmount = Number(amount).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    return symbol + formattedAmount;
 }
+
 
 // Chart functions
 function initializeCharts() {
@@ -180,6 +195,7 @@ function checkPaymentDues() {
     alertsContainer.innerHTML = '';
     let upcomingPayments = [];
 
+
     Object.keys(platforms).forEach(platformName => {
         platforms[platformName].loans.forEach(loan => {
             const lastPaymentDate = new Date(loan.lastPaymentDate);
@@ -213,11 +229,20 @@ function checkPaymentDues() {
             max-width: 350px;
         `;
         alertDiv.innerHTML = `
-            <strong>📅 ${payment.description}</strong><br>
-            Due in ${payment.daysUntilDue} days on ${payment.platform}
-        `;
+  <strong>${payment.description}</strong><br>
+  Due in ${payment.daysUntilDue} days on ${payment.platform}
+  <button class="close-payment-alert" style="float: right; background: none; border: none; color: white; font-size: 1.2em; cursor: pointer;">&times;</button>
+`;
+        // Add handler to close the alert
+        alertDiv.querySelector('.close-payment-alert').onclick = function () {
+            alertDiv.remove();
+        };
         alertsContainer.appendChild(alertDiv);
+
     });
+    const hasAlerts = document.getElementById('paymentAlerts').children.length > 0;
+    document.getElementById('dismissAllPayments').style.display = hasAlerts ? 'block' : 'none';
+
 }
 
 // Theme Toggle
@@ -841,7 +866,8 @@ function formatDate(dateString) {
 
 function renderLoans() {
     const container = document.getElementById('loansContainer');
-    const loans = platforms[currentPlatform].loans;
+    const loans = platforms[currentPlatform].loans
+        .filter(loan => loan.description.toLowerCase().includes(loanSearchTerm.toLowerCase()));
 
     if (loans.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No loans added yet</p>';
@@ -929,7 +955,8 @@ function renderLoans() {
 function renderPlatforms() {
     const grid = document.getElementById('platformsGrid');
     const noPlatforms = document.getElementById('noPlatforms');
-    const platformNames = Object.keys(platforms);
+    const platformNames = Object.keys(platforms)
+        .filter(name => name.toLowerCase().includes(platformSearchTerm.toLowerCase()));
 
     if (platformNames.length === 0) {
         grid.style.display = 'none';
@@ -1112,6 +1139,15 @@ function updatePortfolioSummary() {
     document.getElementById('earnedThisMonth').textContent = formatCurrency(earnedThisMonth);
     document.getElementById('yieldThisYear').textContent = formatCurrency(yieldThisYear);
     document.getElementById('pendingIncomes').textContent = formatCurrency(pendingIncomes);
+    document.getElementById('platformSearch').addEventListener('input', function (e) {
+        platformSearchTerm = e.target.value;
+        renderPlatforms();
+    });
+
+    document.getElementById('loanSearch').addEventListener('input', function (e) {
+        loanSearchTerm = e.target.value;
+        renderLoans();
+    });
 
     // Calculate and display average yield
     const averageYield = (totalInvested > 0)
@@ -1130,6 +1166,12 @@ document.addEventListener('DOMContentLoaded', function () {
     updatePortfolioSummary();
     setTimeout(initializeCharts, 100);
 });
+
+document.getElementById('dismissAllPayments').addEventListener('click', function () {
+    document.getElementById('paymentAlerts').innerHTML = '';
+    this.style.display = 'none';
+});
+
 
 // Modal close on outside click
 window.onclick = function (event) {
